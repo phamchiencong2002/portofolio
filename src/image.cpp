@@ -43,7 +43,11 @@ bool Image::saveToFile(const std::string& filename) const {
         file << pixels[i] << " ";
         if ((i+1) % width == 0) file << "\n";
     }
-    
+    for (int i=0;i<5;i++)
+    {
+        std::cout << "the value of the pixels " << pixels[i] <<" ";
+    }
+     
     file.close();
     return true;
 }
