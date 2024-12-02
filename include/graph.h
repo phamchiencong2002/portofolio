@@ -1,17 +1,29 @@
-#ifndef _GRAPH_H_
-#define _GRAPH_H_
+#ifndef GRAPH_H
+#define GRAPH_H
 
 #include "image.h"
 #include <vector>
+#include <queue>
 
 class Graph {
-    public:
-        int width;
-        int height;
+public:
+    Graph(const Image& image);
+    void calculateDistanceMap();
+    void calculateShortestPaths();
 
-        Graph(const Image& image);
-        std::vector<int> getNeighbors(int i, int j) const;
-        Image unionDistanceImages(const Image& img1, const Image&);
+    Image reconstructBinaryImage() const;
+    Image unionDistanceMaps(const Graph& other) const;
+    int projectPixel(int row, int col) const;
+
+    bool savePredecessorsToFile(const std::string& filename) const;
+    bool loadPredecessorsFromFile(const std::string& filename);
+
+private:
+    const Image& image;
+    std::vector<int> distanceMap;
+    std::vector<int> predecessors;
+
+    int getNeighbor(int index, int direction) const;
 };
 
 #endif

@@ -1,59 +1,42 @@
-#include "image.h"
-#include "dijkstra.h"
-#include "graph.h"
+#include "ShapeProcessor.h"
 #include <iostream>
 
 void displayMenu() {
-    std::cout << "1. Load Image\n"
-              << "2. Save Image\n"
-              << "3. Compute Distance Image\n"
-              << "4. Project Pixel\n"
-              << "5. Union of Distance Images\n"
-              << "0. Exit\n"
-              << "Enter your choice: ";
+    std::cout << "1. Load Form\n2. Save Form\n3. Calculate Distance Map\n4. Save Distance Map\n5. Exit\n";
 }
 
 int main() {
-    Image image;
-    Image distanceImage;
-    std::vector<int> distance, predecessor;
-
+    ShapeProcessor processor;
     while (true) {
         displayMenu();
         int choice;
         std::cin >> choice;
 
-        if (choice == 1) {
-            std::string filename;
-            std::cout << "Enter filename to load: ";
-            std::cin >> filename;
-            if (image.loadFromFile(filename)) {
-                std::cout << "Image loaded successfully.\n";
-                image.print();
-            } else {
-                std::cerr << "Failed to load image.\n";
+        switch (choice) {
+            case 1: {
+                std::string filename;
+                std::cin >> filename;
+                processor.loadForm(filename);
+                break;
             }
-        } else if (choice == 2) {
-            std::string filename;
-            std::cout << "Enter filename to save: ";
-            std::cin >> filename;
-            if (image.saveToFile(filename)) {
-                std::cout << "Image saved successfully.\n";
-            } else {
-                std::cerr << "Failed to save image.\n";
+            case 2: {
+                std::string filename;
+                std::cin >> filename;
+                processor.saveForm(filename);
+                break;
             }
-        } else if (choice == 3) {
-            auto result = Dijkstra::calculateDistanceImage(image);
-            distance = result.first;
-            predecessor = result.second;
-
-            std::cout << "Distance image calculated.\n";
-        } else if (choice == 0) {
-            break;
-        } else {
-            std::cerr << "Invalid choice!\n";
+            case 3:
+                processor.calculateDistanceMap();
+                break;
+            case 4: {
+                std::string filename;
+                std::cin >> filename;
+                processor.saveDistanceMap(filename);
+                break;
+            }
+            case 5:
+                return 0;
         }
     }
-
     return 0;
 }

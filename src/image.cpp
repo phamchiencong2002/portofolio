@@ -1,72 +1,73 @@
 #include "image.h"
-#include <fstream>
 #include <iostream>
-#include <iomanip>
+#include <fstream>
 
-Image::Image(int w, int h, int maxI) : width(w), height(h), maxIntensity(maxI), pixels(w * h,0) {}
+Image::Image(int width, int height) : width(width), height(height) {
+    pixels.resize(width * height, 255);
+}
 
 bool Image::loadFromFile(const std::string& filename) {
     std::ifstream file(filename);
-    if (!file.is_open())
-    {
-        std::cerr << "Error opening file: " << filename << std::endl;
-        return false;
-    }
+    if (!file.is_open()) return false;
 
-    std::string line, format;
-    std::getline(file, format);
-    if (format != "P2") {
-        std::cerr << "Unsupported format: " << format << std::endl;
-        return false;
-    }
-    file >> width >> height >> maxIntensity;
+    std::string line;
+    std::getline(file, line); // Skip P2
+    file >> width >> height;
+    int maxValue;
+    file >> maxValue;
+
     pixels.resize(width * height);
-
-    for(int i=0;i<width * height; i++)
-    {
+    for (int i = 0; i < width * height; ++i) {
         file >> pixels[i];
     }
-    file.close();
     return true;
 }
 
 bool Image::saveToFile(const std::string& filename) const {
     std::ofstream file(filename);
-    if (!file.is_open()){
-        std::cerr << "Error writing to file: " << filename << std::endl;
-        return false;
-    }
+    if (!file.is_open()) return false;
 
-    file << "P2\n" << width << " " << height << "\n" << maxIntensity << "\n";
-    for (int i = 0; i < width * height; i++)
-    {
+    file << "P2\n" << width << " " << height << "\n255\n";
+    for (int i = 0; i < width * height; ++i) {
         file << pixels[i] << " ";
-        if ((i+1) % width == 0) file << "\n";
+        if ((i + 1) % width == 0) file << "\n";
     }
-    for (int i=0;i<5;i++)
-    {
-        std::cout << "the value of the pixels " << pixels[i] <<" ";
-    }
-     
-    file.close();
     return true;
 }
 
-int Image::getPixel(int i, int j) const {
-    return pixels[i * width + j];
-}
-
-void Image::setPixel(int i, int j, int valeur) {
-    pixels[i * width + j] = valeur;
-}
-
-void Image::print() const {
-    for (int i=0;i<height;i++)
-    {
-        for (int j=0;j<width;j++)
-        {
-            std::cout << std::setw(3) << getPixel(i,j) << " ";
+void Image::display() const {
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            std::cout << pixels[getIndex(i, j)] << " ";
         }
-        std::cout << std::endl;
+        std::cout << "\n";
     }
+}
+
+int Image::getIndex(int row, int col) const {
+    return row * width + col;
+}
+
+int Image::getIntensity(int index) const {
+    return pixels[index];
+}
+
+void Image::setIntensity(int index, int value) {
+    pixels[index] = value;
+}
+
+int Image::getWidth() const {
+    return width;
+}
+
+int Image::getHeight() const {
+    return height;
+}
+
+void Image::setPixel(int row, int col, int value) {
+    pixels[getIndex(row, col)] = value;
+}
+
+int Image::getPixel(int row, int col) const {
+    return pixels[getIndex(row, col)];
 }
