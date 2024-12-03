@@ -55,6 +55,5 @@ std::pair<std::vector<int>, std::vector<int>> Dijkstra::calculateDistanceImage(c
             }
         }
     }
-
     return {distance, predecessor};
 }

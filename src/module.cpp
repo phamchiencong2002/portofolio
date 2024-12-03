@@ -58,6 +58,8 @@ Graph Module::computeDistanceImage(const Graph& graph) {
     for (int i = 0; i < graph.getHeight(); ++i) {
         for (int j = 0; j < graph.getWidth(); ++j) {
             int index = i * graph.getWidth() + j;
+            if (distance[index] > 255) 
+                {distance[index] = 255;} 
             distanceGraph.setIntensity(i, j, distance[index]);
         }
     }
@@ -65,6 +67,78 @@ Graph Module::computeDistanceImage(const Graph& graph) {
     return distanceGraph;
 }
 
-void Module::saveDistanceImageToPGM(const Graph& graph, const std::string& filename) {
-    saveFormToPGM(graph, filename);
+
+
+std::pair<int, int> Module::projectPixel(const std::vector<int>& predecessor, int targetX, int targetY, int width)
+
+{
+
+int index = targetX * width + targetY;
+
+while (predecessor[index] != -1)
+
+{
+
+index = predecessor[index];
+
+}
+
+return {index / width, index % width};
+
+}
+
+
+
+// Compute the union of two distance images
+
+Graph Module::unionDistanceImages(const Graph& graph1, const Graph& graph2)
+{
+    if (graph1.getWidth() != graph2.getWidth() || graph1.getHeight() != graph2.getHeight())
+    {
+        throw std::runtime_error("Error: Graph dimensions must match for union.");
+        std::cout << graph1.getWidth() << " " << graph1.getHeight() << " " << graph2.getWidth() << " " << graph2.getHeight();
+    }
+    Graph unionGraph(graph1.getWidth(), graph1.getHeight());
+    for (int i=0; i < graph1.getHeight();i++)
+    {
+        for (int j=0; j<graph1.getWidth();j++)
+        {
+            int value1 = graph1.getIntensity(i, j);
+            int value2 = graph2.getIntensity(i, j);
+            unionGraph.setIntensity(i, j, std::min(value1, value2));
+        }
+    }
+    return unionGraph;
+}
+
+
+
+// Project a pixel onto the union of two forms
+
+std::pair<int, int> Module::projectPixelOnUnion(
+
+const std::vector<int>& predecessor1,
+
+const std::vector<int>& predecessor2,
+
+int targetX, int targetY, int width
+
+)
+
+{
+
+auto project1 = projectPixel(predecessor1, targetX, targetY, width);
+
+auto project2 = projectPixel(predecessor2, targetX, targetY, width);
+
+
+
+int distance1 = std::abs(project1.first - targetX) + std::abs(project1.second - targetY);
+
+int distance2 = std::abs(project2.first - targetX) + std::abs(project2.second - targetY);
+
+
+
+return (distance1 < distance2) ? project1 : project2;
+
 }
