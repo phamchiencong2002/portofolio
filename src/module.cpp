@@ -75,14 +75,15 @@ std::pair<int, int> Module::projectPixel(const std::vector<int>& predecessor, in
 
 int index = targetX * width + targetY;
 
-while (predecessor[index] != -1)
-
-{
-
-index = predecessor[index];
-
-}
-
+    while (predecessor[index] != index && predecessor[index] != -1)
+    {
+        index = predecessor[index];
+    }
+    index = predecessor[index];
+    if (predecessor[index] == -1) {
+        throw std::runtime_error("No path to a black pixel found from the given coordinates.");
+    }
+    
 return {index / width, index % width};
 
 }

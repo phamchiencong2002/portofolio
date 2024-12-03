@@ -10,16 +10,19 @@ std::pair<std::vector<int>, std::vector<int>> Dijkstra::calculateDistanceImage(c
     std::vector<int> predecessor(size, -1);
 
     std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<>> pq;
+    // Initialize distances and priority queue for all zero-intensity pixels
 
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j < width; ++j) {
             if (graph.getIntensity(i, j) == 0) {
                 int index = i * width + j;
                 distance[index] = 0;
+                predecessor[index] = index;
                 pq.push({0, index});
             }
         }
     }
+    // Directions and weights for 8-connectivity
 
     int directions[8][2] = {
         {0, -1}, {1, -1}, {1, 0}, {1, 1},

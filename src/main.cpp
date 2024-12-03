@@ -68,7 +68,7 @@ void displayMenu() {
               << "5. Compute Union of Two Distance Images\n"
               << "6. Project Pixel onto Form\n"
               << "7. Project Pixel onto Union of Forms\n"
-              << "8. Save union image"
+              << "8. Save union image\n"
               << "0. Exit\n"
               << "Enter your choice: ";
 }
